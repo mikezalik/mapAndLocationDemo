@@ -34,9 +34,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == 1) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED ) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-                    locationManager.requestLocationUpdates(locationManager.GPS_PROVIDER,0,0, locationListener);
+                    locationManager.requestLocationUpdates(locationManager.GPS_PROVIDER, 0, 0, locationListener);
             }
         }
     }
@@ -72,10 +72,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public void onLocationChanged(Location location) {
-                Toast.makeText(MapsActivity.this, location.toString(), Toast.LENGTH_SHORT).show();
+                mMap.clear();
                 LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                mMap.addMarker(new MarkerOptions().position(userLocation).title("Marker in Sydney"));
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(userLocation);
+                mMap.addMarker(new MarkerOptions().position(userLocation).title("Your location"));
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(userLocation));
             }
 
             @Override
@@ -95,7 +95,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         };
 
         if (Build.VERSION.SDK_INT < 23) {
-            locationManager.requestLocationUpdates(locationManager.GPS_PROVIDER,0,0, locationListener);
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    Activity#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for Activity#requestPermissions for more details.
+                return;
+            }
+            locationManager.requestLocationUpdates(locationManager.GPS_PROVIDER, 0, 0, locationListener);
         } else {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, 1);
